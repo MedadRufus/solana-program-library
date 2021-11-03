@@ -265,3 +265,9 @@ RUST_LOG=solana=debug spl-token-lending \
   --verbose
 ```
 
+
+Get transation history and debug info with. Put in the transaction address.
+```
+solana confirm -v 4BMCGozqqvgFeyQM9sj9fpyn4u5RSoqBpdRtjNJppsXsX6UHed3tkoYfdxMAfawhrM6UfRggFKMX8jP8hCgK78XJ
+
+```
