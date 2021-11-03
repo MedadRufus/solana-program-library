@@ -146,60 +146,27 @@ software.
 
 
 ## Deploying our token lending program
-```
-solana program deploy -k owner.json  --program-id lending.json  /home/medad/Documents/GitHub/solana-program-library/target/deploy/spl_token_lending.so
 
-deployed program id: AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd
-```
 
-## Wrapping some sol
-```
-(base) medad@medad-ThinkPad-P51:~/Documents/GitHub/solana-program-library/token-lending$ spl-token wrap \
->    --fee-payer owner.json \
->    10.0 \
->    -- owner.json
-Wrapping 10 SOL into 5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf
+### Build
 
-Signature: 3nHPVNtSwDzb6eA5NecADhw6cfNv9SFqQjZ3Joc8ppkAh23wTGx5hHmuUaNKvj7vL673ErukKV5cRemfBeBNYkng
+
+Go to root of this repo, and build all:
+```
+cargo build
+cargo build-bpf
 ```
 
-## Create a lending market
-
-get the pub key of owner.json. This will be the --market-owner/
-
-```bash
-(base) medad@medad-ThinkPad-P51:~/Documents/GitHub/solana-program-library/token-lending$ solana-keygen pubkey owner.jsonBgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
+Then configure our net to deploy to:
 ```
-Remove the `json` prefix of the output. This will be your `--market-owner` argument.
-
-Now create a market:
+solana config set --url https://api.devnet.solana.com
 ```
 
-spl-token-lending \
-  --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
-  --fee-payer    owner.json \
-  create-market \
-  --market-owner BgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
+Then get some sol for testing:
 
-
-# Creating lending market EGx9FQ8JSX8SiLiGUePCZHzL2L7tm4Sj4nW9oiWV1MaF
-# Signature: 3hpbSfCNyg9BGXiDJpYutLmj3zPq9kmkx18r5boDBVpovG7wgvUwShmWnN4JzSp6f9cYz2GSNYHVY35suRgyEZWG
 ```
-
-## Add a reserve to your market
-
-spl-token-lending \
-  --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
-  --fee-payer    owner.json \
-  add-reserve \
-  --market-owner owner.json \
-  --source-owner owner.json \
-  --market       EGx9FQ8JSX8SiLiGUePCZHzL2L7tm4Sj4nW9oiWV1MaF \
-  --source       5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf \
-  --amount       5.0  \
-  --pyth-product 8yrQMUyJRnCJ72NWwMiPV9dNGw465Z8bKUvnUC8P5L6F \
-  --pyth-price   BdgHsXrH1mXqhdosXavYxZgX6bGqTdj5mh2sxDhF8bJy
-
+solana airdrop -k owner.json 5
+```
 
 
 ### Deploying on dev net
