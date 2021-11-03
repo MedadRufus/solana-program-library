@@ -204,41 +204,60 @@ spl-token-lending \
 
 ### Deploying on dev net
 
+### Deploy
+```
+solana program deploy   -k owner.json   --program-id lending.json   target/deploy/spl_token_lending.so
+
+# Program Id: AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd
+
+```
+
+get some Wrapped SOL:
+
+```
+spl-token wrap  --fee-payer owner.json   10.0  -- owner.json
+
+
+Error: Account already exists: 5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf
+```
+
+View existing tokens in account:
+
+```
+spl-token accounts --owner owner.json
+
+
+# Token                                         Balance   
+# ---------------------------------------------------------------
+# So11111111111111111111111111111111111111112   4.99796072
+```
+
+
 create a market
 
 ```
 spl-token-lending \
-  --program      6TvznH3B2e3p2mbhufNBpgSrLx6UkgvxtVQvopEZ2kuH \
-  --fee-payer    owner.json \
-  create-market \
-  --market-owner BgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
+   --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
+   --fee-payer    owner.json \
+   create-market \
+   --market-owner BgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
 
-# Creating lending market 2UN9pVyhJDLoui9JFfcbDi9FUtzryoAvz8CvHEbjWKr7
-# Signature: 2Xdzgeh7YJmAytBTetZbEEe59oYU22aoRAN7oqw6A9eh4skeHotijP28iWC6RpTDCbfyYh9WgFo58EXiukHf9Q2k
+Creating lending market F8S8UeNxq6JgesZBkWZcyxfCGxiBeJi8bSZUt27BL4gr
+
+Signature: 5vmsBycvofWK4soTHDdDGoNTzP4DAiChdrSArsyy27QrZvvf1xFjjp1cCj9Hp4pUV1VWwQmsimoZDAtioewkRzRh
 ```
 
-
-Making a token:
-```
-(base) medad@medad-ThinkPad-P51:~/Documents/GitHub/solana-program-library/token-lending$ spl-token wrap \
->    --fee-payer owner.json \
->    10.0 \
->    -- owner.json
-Wrapping 10 SOL into 5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf
-
-Signature: KAbbD2RCLW8pZUr73wxAczVLg3woVqNsAZCp7H7qg1zAPp4gModYQoSERp9DQ1pCAgXnogXgwJNBM8SvhXKycgh
-```
 
 Add a reserve to your market
 
 ```
 RUST_LOG=solana=debug spl-token-lending \
-  --program      6TvznH3B2e3p2mbhufNBpgSrLx6UkgvxtVQvopEZ2kuH \
+  --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
   --fee-payer    owner.json \
   add-reserve \
   --market-owner owner.json \
   --source-owner owner.json \
-  --market       2UN9pVyhJDLoui9JFfcbDi9FUtzryoAvz8CvHEbjWKr7 \
+  --market       F8S8UeNxq6JgesZBkWZcyxfCGxiBeJi8bSZUt27BL4gr \
   --source       5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf \
   --amount       5.0  \
   --pyth-product 3Mnn2fX6rQyUsyELYms1sBJyChWofzSNRoqYzvgMVz5E \
