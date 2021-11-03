@@ -241,8 +241,8 @@ RUST_LOG=solana=debug spl-token-lending \
   --market       2UN9pVyhJDLoui9JFfcbDi9FUtzryoAvz8CvHEbjWKr7 \
   --source       5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf \
   --amount       5.0  \
-  --pyth-product 8yrQMUyJRnCJ72NWwMiPV9dNGw465Z8bKUvnUC8P5L6F \
-  --pyth-price   BdgHsXrH1mXqhdosXavYxZgX6bGqTdj5mh2sxDhF8bJy
+  --pyth-product 3Mnn2fX6rQyUsyELYms1sBJyChWofzSNRoqYzvgMVz5E \
+  --pyth-price   J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix \
   --verbose
 ```
 
