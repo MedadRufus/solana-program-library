@@ -144,3 +144,104 @@ deploy, integrate, or use the Solana blockchain protocol code directly
 blockchain through light clients, third party interfaces, and/or wallet
 software.
 
+
+## Deploying our token lending program
+```
+solana program deploy -k owner.json  --program-id lending.json  /home/medad/Documents/GitHub/solana-program-library/target/deploy/spl_token_lending.so
+
+deployed program id: AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd
+```
+
+## Wrapping some sol
+```
+(base) medad@medad-ThinkPad-P51:~/Documents/GitHub/solana-program-library/token-lending$ spl-token wrap \
+>    --fee-payer owner.json \
+>    10.0 \
+>    -- owner.json
+Wrapping 10 SOL into 5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf
+
+Signature: 3nHPVNtSwDzb6eA5NecADhw6cfNv9SFqQjZ3Joc8ppkAh23wTGx5hHmuUaNKvj7vL673ErukKV5cRemfBeBNYkng
+```
+
+## Create a lending market
+
+get the pub key of owner.json. This will be the --market-owner/
+
+```bash
+(base) medad@medad-ThinkPad-P51:~/Documents/GitHub/solana-program-library/token-lending$ solana-keygen pubkey owner.jsonBgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
+```
+Remove the `json` prefix of the output. This will be your `--market-owner` argument.
+
+Now create a market:
+```
+
+spl-token-lending \
+  --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
+  --fee-payer    owner.json \
+  create-market \
+  --market-owner BgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
+
+
+# Creating lending market EGx9FQ8JSX8SiLiGUePCZHzL2L7tm4Sj4nW9oiWV1MaF
+# Signature: 3hpbSfCNyg9BGXiDJpYutLmj3zPq9kmkx18r5boDBVpovG7wgvUwShmWnN4JzSp6f9cYz2GSNYHVY35suRgyEZWG
+```
+
+## Add a reserve to your market
+
+spl-token-lending \
+  --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
+  --fee-payer    owner.json \
+  add-reserve \
+  --market-owner owner.json \
+  --source-owner owner.json \
+  --market       EGx9FQ8JSX8SiLiGUePCZHzL2L7tm4Sj4nW9oiWV1MaF \
+  --source       5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf \
+  --amount       5.0  \
+  --pyth-product 8yrQMUyJRnCJ72NWwMiPV9dNGw465Z8bKUvnUC8P5L6F \
+  --pyth-price   BdgHsXrH1mXqhdosXavYxZgX6bGqTdj5mh2sxDhF8bJy
+
+
+
+### Deploying on dev net
+
+create a market
+
+```
+spl-token-lending \
+  --program      6TvznH3B2e3p2mbhufNBpgSrLx6UkgvxtVQvopEZ2kuH \
+  --fee-payer    owner.json \
+  create-market \
+  --market-owner BgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
+
+# Creating lending market 2UN9pVyhJDLoui9JFfcbDi9FUtzryoAvz8CvHEbjWKr7
+# Signature: 2Xdzgeh7YJmAytBTetZbEEe59oYU22aoRAN7oqw6A9eh4skeHotijP28iWC6RpTDCbfyYh9WgFo58EXiukHf9Q2k
+```
+
+
+Making a token:
+```
+(base) medad@medad-ThinkPad-P51:~/Documents/GitHub/solana-program-library/token-lending$ spl-token wrap \
+>    --fee-payer owner.json \
+>    10.0 \
+>    -- owner.json
+Wrapping 10 SOL into 5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf
+
+Signature: KAbbD2RCLW8pZUr73wxAczVLg3woVqNsAZCp7H7qg1zAPp4gModYQoSERp9DQ1pCAgXnogXgwJNBM8SvhXKycgh
+```
+
+Add a reserve to your market
+
+```
+spl-token-lending \
+  --program      6TvznH3B2e3p2mbhufNBpgSrLx6UkgvxtVQvopEZ2kuH \
+  --fee-payer    owner.json \
+  add-reserve \
+  --market-owner owner.json \
+  --source-owner owner.json \
+  --market       2UN9pVyhJDLoui9JFfcbDi9FUtzryoAvz8CvHEbjWKr7 \
+  --source       5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf \
+  --amount       5.0  \
+  --pyth-product 8yrQMUyJRnCJ72NWwMiPV9dNGw465Z8bKUvnUC8P5L6F \
+  --pyth-price   BdgHsXrH1mXqhdosXavYxZgX6bGqTdj5mh2sxDhF8bJy
+
+```
