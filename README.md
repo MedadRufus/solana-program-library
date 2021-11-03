@@ -232,7 +232,7 @@ Signature: KAbbD2RCLW8pZUr73wxAczVLg3woVqNsAZCp7H7qg1zAPp4gModYQoSERp9DQ1pCAgXno
 Add a reserve to your market
 
 ```
-spl-token-lending \
+RUST_LOG=solana=debug spl-token-lending \
   --program      6TvznH3B2e3p2mbhufNBpgSrLx6UkgvxtVQvopEZ2kuH \
   --fee-payer    owner.json \
   add-reserve \
@@ -243,5 +243,6 @@ spl-token-lending \
   --amount       5.0  \
   --pyth-product 8yrQMUyJRnCJ72NWwMiPV9dNGw465Z8bKUvnUC8P5L6F \
   --pyth-price   BdgHsXrH1mXqhdosXavYxZgX6bGqTdj5mh2sxDhF8bJy
-
+  --verbose
 ```
+
