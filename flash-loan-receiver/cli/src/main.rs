@@ -139,6 +139,38 @@ fn main() {
                 ),
         )
         .subcommand(
+            SubCommand::with_name("take-flash-loan")
+                .about("Take a flash loan")
+                .arg(
+                    Arg::with_name("lending_market_owner")
+                        .long("market-owner")
+                        .validator(is_pubkey)
+                        .value_name("PUBKEY")
+                        .takes_value(true)
+                        .required(true)
+                        .help("Owner that can add reserves to the market"),
+                )
+                .arg(
+                    Arg::with_name("oracle_program_id")
+                        .long("oracle")
+                        .validator(is_pubkey)
+                        .value_name("PUBKEY")
+                        .takes_value(true)
+                        .required(true)
+                        .default_value(PYTH_PROGRAM_ID)
+                        .help("Oracle (Pyth) program ID for quoting market prices"),
+                )
+                .arg(
+                    Arg::with_name("quote_currency")
+                        .long("quote")
+                        .value_name("STRING")
+                        .takes_value(true)
+                        .required(true)
+                        .default_value("USD")
+                        .help("Currency market prices are quoted in"),
+                ),
+        )
+        .subcommand(
             SubCommand::with_name("add-reserve")
                 .about("Add a reserve to a lending market")
                 // @TODO: use is_valid_signer
@@ -358,6 +390,18 @@ fn main() {
                 oracle_program_id,
             )
         }
+
+        ("take-flash-loan", Some(arg_matches)) => {
+            let lending_market_owner = pubkey_of(arg_matches, "lending_market_owner").unwrap();
+            let quote_currency = quote_currency_of(arg_matches, "quote_currency").unwrap();
+            let oracle_program_id = pubkey_of(arg_matches, "oracle_program_id").unwrap();
+            command_create_lending_market(
+                &config,
+                lending_market_owner,
+                quote_currency,
+                oracle_program_id,
+            )
+        }
         ("add-reserve", Some(arg_matches)) => {
             let lending_market_owner_keypair =
                 keypair_of(arg_matches, "lending_market_owner").unwrap();
@@ -468,6 +512,58 @@ fn command_create_lending_market(
     send_transaction(config, transaction)?;
     Ok(())
 }
+
+fn command_take_flash_loan(
+    config: &Config,
+    lending_market_owner: Pubkey,
+    quote_currency: [u8; 32],
+    oracle_program_id: Pubkey,
+) -> CommandResult {
+    let lending_market_keypair = Keypair::new();
+    println!(
+        "Creating lending market {}",
+        lending_market_keypair.pubkey()
+    );
+
+    let lending_market_balance = config
+        .rpc_client
+        .get_minimum_balance_for_rent_exemption(LendingMarket::LEN)?;
+
+    let mut transaction = Transaction::new_with_payer(
+        &[
+            // Account for the lending market
+            create_account(
+                &config.fee_payer.pubkey(),
+                &lending_market_keypair.pubkey(),
+                lending_market_balance,
+                LendingMarket::LEN as u64,
+                &config.lending_program_id,
+            ),
+            // Initialize lending market account
+            init_lending_market(
+                config.lending_program_id,
+                lending_market_owner,
+                quote_currency,
+                lending_market_keypair.pubkey(),
+                oracle_program_id,
+            ),
+        ],
+        Some(&config.fee_payer.pubkey()),
+    );
+
+    let (recent_blockhash, fee_calculator) = config.rpc_client.get_recent_blockhash()?;
+    check_fee_payer_balance(
+        config,
+        lending_market_balance + fee_calculator.calculate_fee(transaction.message()),
+    )?;
+    transaction.sign(
+        &vec![config.fee_payer.as_ref(), &lending_market_keypair],
+        recent_blockhash,
+    );
+    send_transaction(config, transaction)?;
+    Ok(())
+}
+
 
 #[allow(clippy::too_many_arguments)]
 fn command_add_reserve(
