@@ -172,11 +172,29 @@ solana airdrop -k owner.json 5
 ### Deploying on dev net
 
 ### Deploy
+
+Deploy the lending program
+
 ```
 solana program deploy   -k owner.json   --program-id lending.json   target/deploy/spl_token_lending.so
 
 # Program Id: AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd
 
+```
+
+Deploy the flash loan receiver program.
+Generate key for flash loan receiver program first:
+
+```
+solana-keygen new -o flash_receiver.json
+```
+
+Then deploy the receiver program
+
+```
+solana program deploy   -k owner.json   --program-id flash_receiver.json   target/deploy/flash_loan_receiver.so
+
+# Program Id: 6yNQm2XVbjqKqr2CKuZfHXPZ1anM8jRcQcKf5WXxTANK
 ```
 
 get some Wrapped SOL:
