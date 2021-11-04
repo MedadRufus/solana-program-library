@@ -1,6 +1,6 @@
 const web3 = require('@solana/web3.js');
 const splToken = require('@solana/spl-token');
-const token_lending = require('@solana/spl-token-lending')
+const token_lending = require('@solana/spl-token-lending');
 
 (async () => {
   // Connect to cluster
