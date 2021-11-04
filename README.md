@@ -182,10 +182,10 @@ solana program deploy   -k owner.json   --program-id lending.json   target/deplo
 get some Wrapped SOL:
 
 ```
-spl-token wrap  --fee-payer owner.json   10.0  -- owner.json
-
-
-Error: Account already exists: 5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf
+spl-token wrap   12.0  owner.json -v --create-aux-account
+# Wrapping 12 SOL into 27JjQQFqCgvtNFL1YFWzGFUEzeXjGSPBLeZeK5PzGtZu
+#
+# Signature: 3jybRJVRA5HHCYNz4tCTJ9L1RLTHgMX1PXoZtni5ZApre4CYLhAnV6XaVG1wMzqkAtGi51Vnr1PtpvpAwNHBVJFy
 ```
 
 View existing tokens in account:
@@ -225,7 +225,7 @@ RUST_LOG=solana=debug spl-token-lending \
   --market-owner owner.json \
   --source-owner owner.json \
   --market       F8S8UeNxq6JgesZBkWZcyxfCGxiBeJi8bSZUt27BL4gr \
-  --source       5evuGHgsP8xApYpEXnkPdnospGrKkP92YJLUMWdBWLFf \
+  --source       27JjQQFqCgvtNFL1YFWzGFUEzeXjGSPBLeZeK5PzGtZu \
   --amount       5.0  \
   --pyth-product 3Mnn2fX6rQyUsyELYms1sBJyChWofzSNRoqYzvgMVz5E \
   --pyth-price   J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix \
