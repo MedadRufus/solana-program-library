@@ -144,3 +144,115 @@ deploy, integrate, or use the Solana blockchain protocol code directly
 blockchain through light clients, third party interfaces, and/or wallet
 software.
 
+
+## Deploying our token lending program
+
+
+### Build
+
+
+Go to root of this repo, and build all:
+```
+cargo build
+cargo build-bpf
+```
+
+Then configure our net to deploy to:
+```
+solana config set --url https://api.devnet.solana.com
+```
+
+Then get some sol for testing:
+
+```
+solana airdrop -k owner.json 5
+```
+
+
+### Deploying on dev net
+
+### Deploy
+
+Deploy the lending program
+
+```
+solana program deploy   -k owner.json   --program-id lending.json   target/deploy/spl_token_lending.so
+
+# Program Id: AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd
+
+```
+
+Deploy the flash loan receiver program.
+Generate key for flash loan receiver program first:
+
+```
+solana-keygen new -o flash_receiver.json
+```
+
+Then deploy the receiver program
+
+```
+solana program deploy   -k owner.json   --program-id flash_receiver.json   target/deploy/flash_loan_receiver.so
+
+# Program Id: 6yNQm2XVbjqKqr2CKuZfHXPZ1anM8jRcQcKf5WXxTANK
+```
+
+get some Wrapped SOL:
+
+```
+spl-token wrap   35.0  owner.json -v --create-aux-account
+# Wrapping 12 SOL into 27JjQQFqCgvtNFL1YFWzGFUEzeXjGSPBLeZeK5PzGtZu
+#
+# Signature: 3jybRJVRA5HHCYNz4tCTJ9L1RLTHgMX1PXoZtni5ZApre4CYLhAnV6XaVG1wMzqkAtGi51Vnr1PtpvpAwNHBVJFy
+```
+
+View existing tokens in account:
+
+```
+spl-token accounts --owner owner.json
+
+
+# Token                                         Balance   
+# ---------------------------------------------------------------
+# So11111111111111111111111111111111111111112   4.99796072
+```
+
+
+create a market
+
+```
+spl-token-lending \
+   --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
+   --fee-payer    owner.json \
+   create-market \
+   --market-owner BgiK5DSRoLZjEmPgZoKuMMXcCwEp7RdiTaFw8Y6hMuth
+
+Creating lending market F8S8UeNxq6JgesZBkWZcyxfCGxiBeJi8bSZUt27BL4gr
+
+Signature: 5vmsBycvofWK4soTHDdDGoNTzP4DAiChdrSArsyy27QrZvvf1xFjjp1cCj9Hp4pUV1VWwQmsimoZDAtioewkRzRh
+```
+
+
+Add a reserve to your market
+
+```
+RUST_LOG=solana=debug spl-token-lending \
+  --program      AaoZFnkc54chRhjK38u2JvVE3pbMT51A8DiiLHLvvXLd \
+  --fee-payer    owner.json \
+  add-reserve \
+  --market-owner owner.json \
+  --source-owner owner.json \
+  --market       F8S8UeNxq6JgesZBkWZcyxfCGxiBeJi8bSZUt27BL4gr \
+  --source       DE8PPMmLS1attA3uFsLaqhkZk8EUvez6e8CjD6wazPZ \
+  --amount       5.0  \
+  --pyth-product 3Mnn2fX6rQyUsyELYms1sBJyChWofzSNRoqYzvgMVz5E \
+  --pyth-price   J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix \
+  --verbose
+```
+
+
+Get transation history and debug info with. Put in the transaction address.
+```
+solana confirm -v 4BMCGozqqvgFeyQM9sj9fpyn4u5RSoqBpdRtjNJppsXsX6UHed3tkoYfdxMAfawhrM6UfRggFKMX8jP8hCgK78XJ
+
+```

@@ -11,3 +11,4 @@ export * from './refreshObligation';
 export * from './refreshReserve';
 export * from './repayObligationLiquidity';
 export * from './withdrawObligationCollateral';
+export * from './flashLoan';
